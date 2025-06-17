@@ -1,0 +1,19 @@
+name: Sync branch
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  sync-branches:
+    name: Sync branch
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Open pull request
+        id: pull
+        uses: tretuna/sync-branches@1.4.0
+        with:
+          FROM_BRANCH: main
+          TO_BRANCH: staging
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

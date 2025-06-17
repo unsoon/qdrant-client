@@ -1,0 +1,55 @@
+name: Create Release PR
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  create-release-pr:
+    name: Create Release PR
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      pull-requests: write
+
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      NPM_TOKEN: ${{ secrets.BOT_NPM_TOKEN }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: "https://registry.npmjs.org"
+          scope: "@unsoon"
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Semantic Release (Dry Run)
+        id: semantic-release
+        run: |
+          npx semantic-release --dry-run
+
+      - name: Create Pull Request
+        if: steps.semantic-release.outputs.version != ''
+        run: |
+          git checkout -b release/v${{ steps.semantic-release.outputs.version }}
+          git push origin release/v${{ steps.semantic-release.outputs.version }}
+
+          gh pr create \
+            --title "Release v${{ steps.semantic-release.outputs.version }}" \
+            --body "🚀 Release PR for version ${{ steps.semantic-release.outputs.version }}" \
+            --base main \
+            --label release
