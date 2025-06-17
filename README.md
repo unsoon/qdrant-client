@@ -10,8 +10,6 @@ It enables you to connect, configure, and inject multiple Qdrant clients in a sc
 - 🎯 Inject clients by name (multitenancy, separation of concerns)
 - 🧼 Tiny, clean and dependency-light
 
----
-
 ## 📦 Installation
 
 ```bash
@@ -21,7 +19,7 @@ npm install --save @unsoon/qdrant-client
 👇 This module also requires the following peer dependencies:
 
 ```bash
-pnpm add @qdrant/{js-client-grpc,js-client-rest}
+npm install --save @qdrant/{js-client-grpc,js-client-rest}
 ```
 
 ## 🧑‍💻 Quick Start
